@@ -12,11 +12,13 @@ const App = () => {
   const [covidData, setCovidData] = useState([]);
   const [search, setSearch] = useState("");
   const [Data, setData] = useState(false);
+  const [open, setOpen] = useState(true);
 
   const onSearchSubmit = async (term) => {
     const StatesArray = await requestStates(term.toLowerCase());
     setData(StatesArray.length === 0);
     setStates(StatesArray);
+    setOpen(true);
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -28,14 +30,25 @@ const App = () => {
 
   // console.log(search);
   const clearData = () => setStates([]);
+  const Open = () => {
+    setOpen(!open);
+  };
 
   const renderedStates = States.map((states, i) => {
-    return <State setSearch={setSearch} statesC={states} key={i} />;
+    return (
+      <div onClick={Open}>
+        {open && <State setSearch={setSearch} statesC={states} />}
+      </div>
+    );
   });
 
   return (
     <div className="app">
-      <SearchBar onSearchSubmit={onSearchSubmit} clearData={clearData} />
+      <SearchBar
+        onSearchSubmit={onSearchSubmit}
+        clearData={clearData}
+        onClick={Open}
+      />
 
       {Data && <p className="no-Data">No data found</p>}
       <div className="main-content">{renderedStates}</div>
